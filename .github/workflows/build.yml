@@ -41,7 +41,7 @@ jobs:
           echo "=== Procurando build.gradle ==="
           find project -name build.gradle -o -name gradlew
           echo "=== Iniciando compilação ==="
-          cd project/creativecolonyassist-0.2.8
+          cd project
           gradle build --no-daemon --stacktrace --info
 
       - name: Upload build results
