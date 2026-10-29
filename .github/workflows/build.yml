@@ -35,8 +35,14 @@ jobs:
 
       - name: Build mod
         run: |
+          set -euxo pipefail
+          echo "=== Arquivos baixados ==="
+          find project -maxdepth 4 -type f | head -200
+          echo "=== Procurando build.gradle ==="
+          find project -name build.gradle -o -name gradlew
+          echo "=== Iniciando compilação ==="
           cd project/creativecolonyassist-0.2.8
-          gradle build --no-daemon
+          gradle build --no-daemon --stacktrace --info
 
       - name: Upload build results
         if: always()
