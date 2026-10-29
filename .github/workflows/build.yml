@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,42 +19,33 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      
 
-      - name: Download source ZIP from release
+      - name: Download source ZIP
         run: |
           mkdir -p project
-          curl -fL \
-            "https://github.com/vitubas11-alt/Creative-Colony-Assist.-/releases/download/v0.2.16/creativecolonyassist-0.2.8.zip" \
-            -o source.zip
+          curl -fL "https://github.com/vitubas11-alt/Creative-Colony-Assist.-/releases/download/v0.2.16/creativecolonyassist-0.2.8.zip" -o source.zip
           unzip -q source.zip -d project
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build mod
-       - name: Salvar log do erro
+      - name: Build mod and save log
+        run: |
+          cd project
+          gradle build --no-daemon --stacktrace --info 2>&1 | tee ../build-log.txt
+
+      - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-log
           path: build-log.txt
           if-no-files-found: warn
-        run: |
-          
-          set -euxo pipefail
-          echo "=== Arquivos baixados ==="
-          find project -maxdepth 4 -type f | head -200
-          echo "=== Procurando build.gradle ==="
-          find project -name build.gradle -o -name gradlew
-          echo "=== Iniciando compilação ==="
-          cd project
-          gradle build --no-daemon --stacktrace --info 2>&1 | tee build-log.txt
 
       - name: Upload build results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: creative-colony-assist-build
-          path: project/**/build/libs/*.jar
+          path: project/build/libs/*.jar
           if-no-files-found: warn
