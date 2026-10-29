@@ -22,10 +22,14 @@ jobs:
           java-version: '17'
 
       - name: Download source ZIP
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p project
-          curl -fL "https://github.com/vitubas11-alt/Creative-Colony-Assist.-/releases/download/v0.2.16/creativecolonyassist-0.2.8.zip" -o source.zip" -o source.zip
+          curl -fL "https://github.com/vitubas11-alt/Creative-Colony-Assist.-/releases/download/v0.2.16/creativecolonyassist-0.2.8.zip" -o source.zip
           unzip -q source.zip -d project
+          echo "=== Estrutura do projeto ==="
+          find project -maxdepth 3 -type f | sort | head -100
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -33,7 +37,9 @@ jobs:
       - name: Build mod and save log
         env:
           GRADLE_OPTS: "-Xmx3G -XX:MaxMetaspaceSize=1G"
+        shell: bash
         run: |
+          set -o pipefail
           cd project
           gradle build --no-daemon --stacktrace --info 2>&1 | tee ../build-log.txt
 
