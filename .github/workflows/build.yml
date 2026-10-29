@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,13 +24,15 @@ jobs:
       - name: Download source ZIP
         run: |
           mkdir -p project
-          curl -fL "https://github.com/vitubas11-alt/Creative-Colony-Assist.-/releases/download/v0.2.16/creativecolonyassist-0.2.8.zip" -o source.zip
+          curl -fL "https://github.com/vitubas11-alt/Creative-Colony-Assist.-/releases/download/v0.2.16/creativecolonyassist-1.20.1-0.2.16.zip" -o source.zip
           unzip -q source.zip -d project
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build mod and save log
+        env:
+          GRADLE_OPTS: "-Xmx3G -XX:MaxMetaspaceSize=1G"
         run: |
           cd project
           gradle build --no-daemon --stacktrace --info 2>&1 | tee ../build-log.txt
